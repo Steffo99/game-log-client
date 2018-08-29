@@ -1,11 +1,100 @@
-label {
-    display: block;
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(0, 51, 40);
+    color: rgb(0, 255, 200);
 }
 
-label.success {
-    color: green;
+#login {
+    display: flex;
+
+    .form.login {
+        width: 50%;
+    }
+
+    .form.register {
+        width: 50%;
+    }
 }
 
-label.error {
-    color: red;
+label.formelement {
+    display: flex;
+    width: 100%;
+
+    span {
+        width: 50%;
+        text-transform: capitalize;
+    }
+
+    input {
+        width: 50%;
+        border: 0;
+        background-color: rgba(255, 255, 255, 0.5);
+        padding: 4px;
+        border-radius: 4px;
+    }
+}
+
+.form {
+    display: flex;
+    flex-flow: column;
+
+    h1 {
+        margin: 2px 0;
+    }
+
+    label.formelement {
+        margin: 2px 0;
+    }
+
+    button {
+        margin-top: auto;
+        align-self: flex-end;
+    }
+
+    background-color: rgb(0, 255, 200);
+    color: black;
+    margin: 4px;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+button {
+    background-color: transparent;
+    min-width: 120px;
+    width: 100%;
+    padding: 4px;
+    border-radius: 4px;
+    border: none;
+
+    &:disabled {
+        background-color: rgba(0, 0, 0, 0.1);
+        color: darkgray;
+    }
+
+    &:enabled {
+        color: black;
+        background-color: rgba(255, 255, 255, 0.5);
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        &:active {
+            background-color: rgba(255, 255, 255, 1.0);
+        }
+    }
+    
+    .oneusebutton {
+        &.working {
+            color: black;
+        }
+
+        &.error {
+            color: red;
+        }
+
+        &.done {
+            color: green;
+        }
+    }
 }

@@ -6,7 +6,7 @@ class FormElement extends React.Component {
 
     render() {
         var type;
-        var status = "";
+        var status = "formelement";
         if(this.props.type !== undefined)
         {
             type = this.props.type;
@@ -17,9 +17,9 @@ class FormElement extends React.Component {
         }
         if(this.props.error !== undefined)
         {
-            status = "error";
+            status += " error";
         }
-        return <label className={status} title={this.props.error}>{this.props.name} <input onInput={this.handleInput} type={type} name={this.props.name} /></label>
+        return <label className={status} title={this.props.error}><span>{this.props.name}</span> <input onInput={this.handleInput} type={type} name={this.props.name} /></label>
     }
 
     handleInput = (event) => {
@@ -33,35 +33,36 @@ class OneUseButton extends React.Component {
     }
 
     render() {
+        var classNames = "oneusebutton " + this.props.progress
         if(this.props.progress == "disabled")
         {
-            return <button disabled type="button"> 
+            return <button className={classNames} disabled type="button"> 
                 {this.props.text}
             </button>;
         }
         if(this.props.progress == "not-clicked")
         {
-            return <button type="button" onClick={this.props.handleClick}> 
+            return <button className={classNames} type="button" onClick={this.props.handleClick}> 
                 {this.props.text}
             </button>;
         }
         else if(this.props.progress == "working")
         {
-            return <button disabled type="button">
+            return <button className={classNames} disabled type="button">
                 <i className="fas fa-spinner fa-pulse"></i> 
                 {this.props.text}
             </button>;
         }
         else if(this.props.progress == "error")
         {
-            return <button type="button" onClick={this.props.handleClick}>
+            return <button className={classNames} type="button" onClick={this.props.handleClick}>
                 <i className="fas fa-exclamation-circle"></i> 
                 {this.props.text}
             </button>;
         }
         else if(this.props.progress == "done")
         {
-            return <button disabled type="button">
+            return <button className={classNames} disabled type="button">
                 <i className="fas fa-check"></i> 
                 {this.props.text}
             </button>;
@@ -85,7 +86,7 @@ class LoginForm extends React.Component {
         else {
             progress = this.state.progress;
         }
-        return <div className="login-form">
+        return <div className="form login">
             <h1>Login</h1>
             <FormElement handleInput={this.onUserInput} name="username"></FormElement>
             <FormElement handleInput={this.onPasswordInput} name="password" type="password"></FormElement>
@@ -163,7 +164,7 @@ class RegisterForm extends React.Component {
         {
             progress = this.state.progress;
         }
-        return <div className="register-form">
+        return <div className="form register">
             <h1>Register</h1>
             <FormElement handleInput={this.onUserInput} name="username"></FormElement>
             <FormElement handleInput={this.onPasswordInput} name="password" type="password"></FormElement>
@@ -250,18 +251,25 @@ class RegisterForm extends React.Component {
         })
     }
 }
+/*
+var token = localStorage.getItem("login_token");
+var user = localStorage.getItem("logged_user_unsafe");
+*/
 
-if(localStorage.getItem("login_token") !== null)
+var token = null;
+var user = null;
+
+if(token !== null && user !== null)
 {
     window.location.href = "main.html"
 }
 else
 {
     ReactDOM.render(
-        <div>
+        <div id="login">
             <LoginForm></LoginForm>
             <RegisterForm></RegisterForm>
         </div>,
-        document.getElementById('login')
+        document.getElementById('react')
     );
 }
