@@ -7,13 +7,21 @@ body {
 #login {
     display: flex;
 
-    .form.login {
-        width: 50%;
+    @media (min-width: 640px) {
+        flex-flow: row;
+        
+        .form.login {
+            width: 50%;
+        }
+
+        .form.register {
+            width: 50%;
+        }
     }
 
-    .form.register {
-        width: 50%;
-    }
+    @media (max-width: 641px) {
+        flex-flow: column;
+    }    
 }
 
 label.formelement {
@@ -96,5 +104,71 @@ button {
         &.done {
             color: green;
         }
+
+        i::after {
+            content: " ";
+        }
+    }
+}
+
+.editbutton {
+    display: inline;
+    width: initial;
+    vertical-align: text-bottom;
+}
+
+.gamecopy {
+    display: flex;
+    flex-direction: row;
+    background-color: rgb(255, 255, 255);
+    color: black;
+    margin: 2px;
+    padding: 8px;
+    border-radius: 8px;
+    transition-duration: 0.5s;
+
+    .ratingwidget {
+        margin-right: 6px;
+    }
+
+    .ratingicon {
+        margin: 1px;
+        color: rgba(0, 0, 0, 0.2);
+
+        &.editable:hover {
+            color: rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+        }
+
+        &.editable:active {
+            color: rgba(0, 0, 0, 1);
+        }
+
+        &:not(.editable):not(.selected), &:not(.editable).unrated {
+            display: none;
+        }
+    }
+
+    &.loved {
+        background-color: rgb(255, 115, 255);
+        padding-top: 12px;
+        padding-bottom: 12px;
+        font-size: x-large;
+    }
+
+    &.liked {
+        background-color: rgb(0, 255, 200);
+    }
+
+    &.mixed {
+        background-color: rgb(255, 255, 100)
+    }
+
+    &.disliked {
+        background-color: rgb(255, 100, 100)
+    }
+
+    .gameplatform {
+        margin-left: auto;
     }
 }
