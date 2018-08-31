@@ -54,7 +54,7 @@ label.formelement {
         margin: 2px 0;
     }
 
-    button {
+    .button {
         margin-top: auto;
         align-self: flex-end;
     }
@@ -66,22 +66,23 @@ label.formelement {
     border-radius: 8px;
 }
 
-button {
-    background-color: transparent;
+.button {
     min-width: 120px;
     width: 100%;
     padding: 4px;
     border-radius: 4px;
     border: none;
+    color: black;
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
 
     &:disabled {
+        cursor: not-allowed;
         background-color: rgba(0, 0, 0, 0.1);
         color: darkgray;
     }
 
     &:enabled {
-        color: black;
-        background-color: rgba(255, 255, 255, 0.5);
 
         &:hover {
             background-color: rgba(255, 255, 255, 0.8);
@@ -92,9 +93,12 @@ button {
         }
     }
     
-    .oneusebutton {
+    &.oneusebutton {
         &.working {
             color: black;
+            &.dark {
+                color: white;
+            }
         }
 
         &.error {
@@ -109,12 +113,26 @@ button {
             content: " ";
         }
     }
+
+    &.addgamebutton {
+        background-color: transparent;
+        color: rgb(0, 51, 40);
+        margin: 2px;
+        padding: 6px;
+        border: 2px dashed rgb(0, 255, 200);
+        color: rgb(0, 255, 200);
+        border-radius: 8px;
+        font-size: medium;
+        text-align: left;
+    }
 }
 
-.editbutton {
-    display: inline;
-    width: initial;
-    vertical-align: text-bottom;
+.ratingwidget {
+    margin-right: 6px;
+}
+
+.progresswidget {
+    margin-left: auto;
 }
 
 .gamecopy {
@@ -127,15 +145,11 @@ button {
     border-radius: 8px;
     transition-duration: 0.5s;
 
-    .ratingwidget {
-        margin-right: 6px;
-    }
-
-    .ratingicon {
+    .clickableicon {
         margin: 1px;
         color: rgba(0, 0, 0, 0.2);
 
-        &.editable:hover {
+        &.editable:hover, &.editable.selected:not(.not_started):not(.unrated) {
             color: rgba(0, 0, 0, 0.5);
             cursor: pointer;
         }
@@ -144,7 +158,7 @@ button {
             color: rgba(0, 0, 0, 1);
         }
 
-        &:not(.editable):not(.selected), &:not(.editable).unrated {
+        &:not(.editable):not(.selected), &:not(.editable).unrated, &:not(.editable).not_started {
             display: none;
         }
     }
@@ -169,6 +183,52 @@ button {
     }
 
     .gameplatform {
-        margin-left: auto;
+        color: rgba(0, 0, 0, 0.3);
+        margin-left: 6px;
+
+        &::before {
+            content: "(";
+        }
+
+        &::after {
+            content: ")";
+        }
+    }
+}
+
+.profile {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+
+    .button {
+        &.editbutton {
+            display: inline;
+            font-weight: normal;
+        }
+        
+        &.addgamebutton {
+            display: block;
+            font-size: medium;
+        }
+
+        width: initial;
+        vertical-align: text-bottom;
+        background-color: rgb(0, 255, 200);
+        color: black;
+
+        &:disabled {
+            background-color: rgba(0, 255, 200, 0.3);
+        }
+
+        &:enabled {    
+            &:hover {
+                background-color: rgb(130, 255, 228);
+            }
+    
+            &:active {
+                background-color: rgb(255, 255, 255);
+            }
+        }
     }
 }
