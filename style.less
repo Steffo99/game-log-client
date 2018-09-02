@@ -1,27 +1,11 @@
+@main-color: rgb(0, 255, 200);
+@background-color: rgb(0, 51, 40);
+
 body {
     font-family: Arial, Helvetica, sans-serif;
-    background-color: rgb(0, 51, 40);
-    color: rgb(0, 255, 200);
-}
-
-#login {
-    display: flex;
-
-    @media (min-width: 640px) {
-        flex-flow: row;
-        
-        .form.login {
-            width: 50%;
-        }
-
-        .form.register {
-            width: 50%;
-        }
-    }
-
-    @media (max-width: 641px) {
-        flex-flow: column;
-    }    
+    background-color: @background-color;
+    color: @main-color;
+    box-sizing: border-box;
 }
 
 label.formelement {
@@ -59,7 +43,7 @@ label.formelement {
         align-self: flex-end;
     }
 
-    background-color: rgb(0, 255, 200);
+    background-color: @main-color;
     color: black;
     margin: 4px;
     padding: 8px;
@@ -70,35 +54,38 @@ label.formelement {
     min-width: 120px;
     width: 100%;
     padding: 4px;
-    border-radius: 4px;
-    border: none;
-    color: black;
-    background-color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
+    box-sizing: border-box;
 
-    &:disabled {
+    &[disabled=""] {
         cursor: not-allowed;
-        background-color: rgba(0, 0, 0, 0.1);
-        color: darkgray;
-    }
-
-    &:enabled {
-
-        &:hover {
-            background-color: rgba(255, 255, 255, 0.8);
-        }
-
-        &:active {
-            background-color: rgba(255, 255, 255, 1.0);
-        }
     }
     
+    &.formbutton {
+        border-radius: 4px;
+        border: none;
+        color: black;
+        background-color: rgba(255, 255, 255, 0.5);
+
+        &[disabled=""] {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: darkgray;
+        }
+
+        &:enabled {
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.8);
+            }
+    
+            &:active {
+                background-color: rgba(255, 255, 255, 1.0);
+            }
+        }
+    }
+
     &.oneusebutton {
         &.working {
-            color: black;
-            &.dark {
-                color: white;
-            }
+            color: grey;
         }
 
         &.error {
@@ -109,80 +96,45 @@ label.formelement {
             color: green;
         }
 
-        i::after {
-            content: " ";
+        i.button-icon {
+            margin-right: 4px;
         }
     }
 
-    &.addgamebutton {
-        background-color: transparent;
-        color: rgb(0, 51, 40);
-        margin: 2px;
-        padding: 6px;
-        border: 2px dashed rgb(0, 255, 200);
-        color: rgb(0, 255, 200);
-        border-radius: 8px;
-        font-size: medium;
-        text-align: left;
+    &.togglebutton {
+        &.on {
+            color: green;
+        }
+
+        &.off {
+            color: darkred;
+        }
     }
 }
 
-.ratingwidget {
-    margin-right: 6px;
+i.far, i.fas, i.fab {
+    margin: 1px;
 }
 
-.progresswidget {
-    margin-left: auto;
-}
-
-.gamecopy {
+.game {
     display: flex;
     flex-direction: row;
-    background-color: rgb(255, 255, 255);
+    background-color: white;
     color: black;
     margin: 2px;
     padding: 8px;
     border-radius: 8px;
     transition-duration: 0.5s;
 
-    .clickableicon {
-        margin: 1px;
-        color: rgba(0, 0, 0, 0.2);
-
-        &.editable:hover, &.editable.selected:not(.not_started):not(.unrated) {
-            color: rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-        }
-
-        &.editable:active {
-            color: rgba(0, 0, 0, 1);
-        }
-
-        &:not(.editable):not(.selected), &:not(.editable).unrated, &:not(.editable).not_started {
-            display: none;
-        }
+    .rating {
+        margin-right: 6px;
+    }
+    
+    .progress {
+        margin-left: auto;
     }
 
-    &.loved {
-        background-color: rgb(255, 115, 255);
-        padding-top: 12px;
-        padding-bottom: 12px;
-        font-size: x-large;
-    }
-
-    &.liked {
-        background-color: rgb(0, 255, 200);
-    }
-
-    &.mixed {
-        background-color: rgb(255, 255, 100)
-    }
-
-    &.disliked {
-        background-color: rgb(255, 100, 100)
-    }
-
-    .gameplatform {
+    .platform {
         color: rgba(0, 0, 0, 0.3);
         margin-left: 6px;
 
@@ -194,41 +146,121 @@ label.formelement {
             content: ")";
         }
     }
+
+    .rating, .progress {
+        color: rgba(0, 0, 0, 0.2);
+
+        i.editing {
+            //Hovered or selected
+            &:hover, &.selected:not(.not_started):not(.unrated) {
+                color: rgba(0, 0, 0, 0.5);
+                cursor: pointer;
+            }
+
+            &:active {
+                color: rgba(0, 0, 0, 1);
+            }
+        }
+    }
+
+    &.loved {
+        background-color: rgb(255, 115, 255);
+        padding-top: 12px;
+        padding-bottom: 12px;
+        font-size: x-large;
+    }
+
+    &.liked {
+        background-color: @main-color;
+    }
+
+    &.mixed {
+        background-color: rgb(255, 255, 100)
+    }
+
+    &.disliked {
+        background-color: rgb(255, 100, 100)
+    }
+
+    &.null {
+        background-color: transparent;
+        border: 2px dashed @main-color;
+        color: @main-color;
+        padding: 6px;
+
+        .rating, .progress {
+            color: @main-color;
+        }
+    }
 }
 
-.profile {
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+#login {
+    display: flex;
 
-    .button {
-        &.editbutton {
-            display: inline;
-            font-weight: normal;
-        }
+    @media (min-width: 640px) {
+        flex-flow: row;
         
-        &.addgamebutton {
-            display: block;
-            font-size: medium;
+        .form.login {
+            width: 50%;
         }
 
-        width: initial;
-        vertical-align: text-bottom;
-        background-color: rgb(0, 255, 200);
+        .form.register {
+            width: 50%;
+        }
+    }
+
+    @media (max-width: 641px) {
+        flex-flow: column;
+    }
+
+    #loginbutton, #registerbutton {
+        min-width: 120px;
+        width: 100%;
+        padding: 4px;
+        border-radius: 4px;
         color: black;
+        background-color: rgba(255, 255, 255, 0.5);
 
-        &:disabled {
-            background-color: rgba(0, 255, 200, 0.3);
+        &[disabled=""] {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: darkgray;
         }
-
-        &:enabled {    
+    
+        &:not([disabled=""]) {
             &:hover {
-                background-color: rgb(130, 255, 228);
+                background-color: rgba(255, 255, 255, 0.8);
             }
     
             &:active {
-                background-color: rgb(255, 255, 255);
+                background-color: rgba(255, 255, 255, 1.0);
             }
         }
     }
 }
+
+#profile {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+
+    #editbutton {
+        display: inline;
+        font-weight: normal;
+        font-size: medium;
+        vertical-align: middle;
+    }
+
+    #addsteamgamesbutton {
+        width: unset;
+        transition-duration: 0s;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        &:active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    } 
+}
+

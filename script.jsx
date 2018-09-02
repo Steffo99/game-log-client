@@ -1,6 +1,12 @@
 var token = localStorage.getItem("token");
 var user_id = localStorage.getItem("user_id");
 var username = localStorage.getItem("username");
+var host = "https://game-log.steffo.eu";
+
+function noU(variable)
+{
+    return (variable ? variable : "")
+}
 
 class FormElement extends React.Component {
     render() {
@@ -28,61 +34,32 @@ class FormElement extends React.Component {
 
 class OneUseButton extends React.Component {
 
+    nullFunction = () => {};
+
     render() {
-        var classNames = "button oneusebutton " + this.props.progress + " "
-        if(this.props.classNames != undefined) 
+        var className = "button oneusebutton " + this.props.progress + " " + noU(this.props.className);
+        var disabled = !(this.props.progress == "not-clicked" || this.props.progress == "error");
+        var handleClick = disabled ? this.nullFunction : this.props.handleClick;
+        var iconClasses;
+        if(this.props.progress == "working") iconClasses = "icon fas fa-spinner fa-pulse";
+        else if(this.props.progress == "error") iconClasses = "icon fas fa-exclamation-circle";
+        else if(this.props.progress == "success") iconClasses = "icon fas fa-check";
+        else
         {
-            classNames += this.props.classNames;
+            iconClasses = "icon " + noU(this.props.icon);
         }
-        if(this.props.progress == "disabled")
-        {
-            return <div className={classNames} disabled type="button"> 
-                {this.props.text}
-            </div>;
-        }
-        if(this.props.progress == "not-clicked")
-        {
-            return <div className={classNames} type="button" onClick={this.props.handleClick}> 
-                {this.props.text}
-            </div>;
-        }
-        else if(this.props.progress == "working")
-        {
-            return <div className={classNames} disabled type="button">
-                <i className="fas fa-spinner fa-pulse"></i> 
-                {this.props.text}
-            </div>;
-        }
-        else if(this.props.progress == "error")
-        {
-            return <div className={classNames} type="button" onClick={this.props.handleClick}>
-                <i className="fas fa-exclamation-circle"></i> 
-                {this.props.text}
-            </div>;
-        }
-        else if(this.props.progress == "done")
-        {
-            return <div className={classNames} disabled type="button">
-                <i className="fas fa-check"></i> 
-                {this.props.text}
-            </div>;
-        }
+        return <div id={noU(this.props.id)} className={className} disabled={disabled} onClick={handleClick}>
+            <i className={iconClasses}></i>
+            {this.props.text}
+        </div>;
     }
 }
 
 class ToggleButton extends React.Component {
 
     render() {
-        var classNames = "button togglebutton " + this.props.className;
-        if(this.props.buttonState)
-        {
-            classNames += " on";
-        }
-        else
-        {
-            classNames += " off";
-        }
-        return <div className={classNames} onClick={this.props.handleClick} type="button"> 
+        var classNames = "button togglebutton " + noU(this.props.className) + " " + (this.props.buttonState ? "on" : "off");
+        return <div id={noU(this.props.id)} className={classNames} onClick={this.props.handleClick} type="button"> 
             {this.props.text}
         </div>;
     }
@@ -108,7 +85,7 @@ class LoginForm extends React.Component {
             <h1>Login</h1>
             <FormElement handleInput={this.onUserInput} name="username"></FormElement>
             <FormElement handleInput={this.onPasswordInput} name="password" type="password"></FormElement>
-            <OneUseButton handleClick={this.onLoginClick} progress={progress} text="Login"></OneUseButton>
+            <OneUseButton id="loginbutton" handleClick={this.onLoginClick} progress={progress} text="Login"></OneUseButton>
         </div>;
     }
 
@@ -129,7 +106,7 @@ class LoginForm extends React.Component {
         data.append("username", this.state.username);
         data.append("password", this.state.password);
         //Send the request
-        fetch("http://127.0.0.1:5000/api/v1/user/token", {
+        fetch(host + "/api/v1/user/token", {
             "method": "POST",
             "body": data
         })
@@ -194,7 +171,7 @@ class RegisterForm extends React.Component {
             <FormElement handleInput={this.onUserInput} name="username"></FormElement>
             <FormElement handleInput={this.onPasswordInput} name="password" type="password"></FormElement>
             <FormElement handleInput={this.onConfirmPasswordInput} name="confirm-password" type="password"></FormElement>
-            <OneUseButton handleClick={this.onRegisterClick} progress={progress} text="Register"></OneUseButton>
+            <OneUseButton id="registerbutton" handleClick={this.onRegisterClick} progress={progress} text="Register"></OneUseButton>
         </div>
     }
 
@@ -219,7 +196,7 @@ class RegisterForm extends React.Component {
         data.append("username", username);
         data.append("password", password);
         //Send the request
-        fetch("http://127.0.0.1:5000/api/v1/user/register", {
+        fetch(host + "/api/v1/user/register", {
             "method": "POST",
             "body": data
         })
@@ -246,7 +223,7 @@ class RegisterForm extends React.Component {
             });
         })
         //Now login too
-        fetch("http://127.0.0.1:5000/api/v1/user/token", {
+        fetch(host + "/api/v1/user/token", {
             "method": "POST",
             "body": data
         })
@@ -295,26 +272,23 @@ class Profile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            editable: false
+            editing: false
         }
     }
 
     render()
     {
-        var editButton = null;
-        if(this.props.userId === user_id);
-        {
-            editButton = <ToggleButton handleClick={this.toggleEditable} className="editbutton" buttonState={this.state.editable} text="Edit"></ToggleButton>;
-        }
-        return <div className="profile">
+        var editable = (this.props.userId === user_id)
+        var editButton = editable ? editButton = <ToggleButton id="editbutton" handleClick={this.toggleEditable} buttonState={this.state.editing} text="Edit"></ToggleButton> : null;
+        return <div id="profile">
             <h2>{this.props.username}'s profile {editButton}</h2>
-            <GamesList editable={this.state.editable} userId={this.props.userId}></GamesList>
-        </div>
+            <GamesList editing={this.state.editing} userId={this.props.userId}></GamesList>
+        </div>;
     }
 
     toggleEditable = () => {
         this.setState(prevState => ({
-            editable: !prevState.editable
+            editing: !prevState.editing
         }));
     }
 }
@@ -330,8 +304,12 @@ class GamesList extends React.Component {
     }
 
     componentDidMount() {
+        this.getGamesList();
+    }
+
+    getGamesList = () => {
         //GET the list of owned games
-        fetch("http://127.0.0.1:5000/api/v1/copy/list?user_id=" + this.props.userId, {
+        fetch(host + "/api/v1/copy/list?user_id=" + this.props.userId, {
             "method": "GET"
         })
         .then(res => res.json())
@@ -362,7 +340,7 @@ class GamesList extends React.Component {
         this.setState({
             steamLoginProgress: "working"
         });
-        window.location.href = "http://127.0.0.1:5000/openid/steam/login?token=" + token + "&redirect_to=https://steffo99.github.io/game-log-client/"s;
+        window.location.href = host + "/openid/steam/login?token=" + token + "&redirect_to=https://steffo99.github.io/game-log-client/";
     }
 
     render() {
@@ -382,14 +360,12 @@ class GamesList extends React.Component {
         else if(this.state.progress == "done")
         {
             games = this.state.copies.map((gamecopy) => {
-                return <GameCopy gameCopy={gamecopy} editable={this.props.editable} key={gamecopy.id}></GameCopy>
+                return <GameCopy gameCopy={gamecopy} editing={this.props.editing} key={gamecopy.id}></GameCopy>
             });
-            
         }
-        var steamAddContents = <div><i className="fab fa-steam"></i> Add games from Steam</div>;
         return <div className="gameslist done">
             {games}
-            <OneUseButton handleClick={this.onAddSteamGamesClick} progress={this.state.steamLoginProgress} text={steamAddContents} classNames="addgamebutton"></OneUseButton>
+            <OneUseButton id="addsteamgamesbutton" className="game null" text="Add games from Steam" handleClick={this.onAddSteamGamesClick} progress={this.state.steamLoginProgress} icon="fab fa-steam rating"></OneUseButton>
         </div>;
     }
 }
@@ -401,7 +377,7 @@ class GameCopy extends React.Component {
     }
 
     render() {
-        var classNames = "gamecopy ";
+        var classNames = "game ";
         if(this.state.rating === null || this.state.rating === "UNRATED")
         {
             classNames += "unrated";
@@ -411,9 +387,9 @@ class GameCopy extends React.Component {
             classNames += this.state.rating.toLowerCase();
         }
         return <div className={classNames}>
-            <RatingWidget editable={this.props.editable} rating={this.state.rating} clickHandler={this.handleRatings}></RatingWidget>
-            <div className="gamename">{this.state.game.name}<span className="gameplatform">{this.state.game.platform}</span></div>
-            <ProgressWidget editable={this.props.editable} progress={this.state.progress} clickHandler={this.handleProgress}></ProgressWidget>
+            <RatingWidget editing={this.props.editing} rating={this.state.rating} clickHandler={this.handleRatings}></RatingWidget>
+            <div className="name">{this.state.game.name}<span className="platform">{this.state.game.platform}</span></div>
+            <ProgressWidget editing={this.props.editing} progress={this.state.progress} clickHandler={this.handleProgress}></ProgressWidget>
         </div>;
     }
 
@@ -426,7 +402,7 @@ class GameCopy extends React.Component {
         data.append("copy_id", this.state.id);
         data.append("rating", rating);
         data.append("token", token)
-        fetch("http://127.0.0.1:5000/api/v1/copy/rating", {
+        fetch(host + "/api/v1/copy/rating", {
             "method": "POST",
             "body": data
         })
@@ -455,7 +431,7 @@ class GameCopy extends React.Component {
         data.append("copy_id", this.state.id);
         data.append("progress", progress);
         data.append("token", token)
-        fetch("http://127.0.0.1:5000/api/v1/copy/progress", {
+        fetch(host + "/api/v1/copy/progress", {
             "method": "POST",
             "body": data
         })
@@ -478,48 +454,51 @@ class GameCopy extends React.Component {
 
 class ProgressWidget extends React.Component {
     render() {
-        return <div className="progresswidget">
-            <ClickableIcon editable={this.props.editable} clickHandler={this.props.clickHandler} selection={this.props.progress} value="NOT_STARTED" iconName="fa-eraser"></ClickableIcon>
-            <ClickableIcon editable={this.props.editable} clickHandler={this.props.clickHandler} selection={this.props.progress} value="UNFINISHED" iconName="fa-play"></ClickableIcon>
-            <ClickableIcon editable={this.props.editable} clickHandler={this.props.clickHandler} selection={this.props.progress} value="BEATEN" iconName="fa-check-circle"></ClickableIcon>
-            <ClickableIcon editable={this.props.editable} clickHandler={this.props.clickHandler} selection={this.props.progress} value="COMPLETED" iconName="fa-trophy"></ClickableIcon>
-            <ClickableIcon editable={this.props.editable} clickHandler={this.props.clickHandler} selection={this.props.progress} value="MASTERED" iconName="fa-gem"></ClickableIcon>
-            <ClickableIcon editable={this.props.editable} clickHandler={this.props.clickHandler} selection={this.props.progress} value="NO_PROGRESS" iconName="fa-ban"></ClickableIcon>
+        var not_started = (this.props.editing) ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="NOT_STARTED" iconName="fas fa-eraser"></ClickableIcon> : null;
+        var unfinished = (this.props.editing || this.props.progress === "UNFINISHED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="UNFINISHED" iconName="fas fa-play"></ClickableIcon> : null;
+        var beaten = (this.props.editing || this.props.progress === "BEATEN") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="BEATEN" iconName="fas fa-check-circle"></ClickableIcon> : null;
+        var completed = (this.props.editing || this.props.progress === "COMPLETED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="COMPLETED" iconName="fas fa-trophy"></ClickableIcon> : null;
+        var mastered = (this.props.editing || this.props.progress === "MASTERED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="MASTERED" iconName="fas fa-gem"></ClickableIcon> : null;
+        var no_progress = (this.props.editing || this.props.progress === "NO_PROGRESS") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="NO_PROGRESS" iconName="fas fa-ban"></ClickableIcon> : null;
+        return <div className="progress">
+            {not_started}
+            {unfinished}
+            {beaten}
+            {completed}
+            {mastered}
+            {no_progress}
         </div>
     }
 }
 
 class RatingWidget extends React.Component {
     render() {
-        return <div className="ratingwidget">
-            <ClickableIcon editable={this.props.editable} clickHandler={this.props.clickHandler} selection={this.props.rating} value="UNRATED" iconName="fa-eraser"></ClickableIcon>
-            <ClickableIcon editable={this.props.editable} clickHandler={this.props.clickHandler} selection={this.props.rating} value="DISLIKED" iconName="fa-thumbs-down"></ClickableIcon>
-            <ClickableIcon editable={this.props.editable} clickHandler={this.props.clickHandler} selection={this.props.rating} value="MIXED" iconName="fa-circle"></ClickableIcon>
-            <ClickableIcon editable={this.props.editable} clickHandler={this.props.clickHandler} selection={this.props.rating} value="LIKED" iconName="fa-thumbs-up"></ClickableIcon>
-            <ClickableIcon editable={this.props.editable} clickHandler={this.props.clickHandler} selection={this.props.rating} value="LOVED" iconName="fa-heart"></ClickableIcon>
-        </div>
+        var unrated = (this.props.editing) ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="UNRATED" iconName="fas fa-eraser"></ClickableIcon> : null;
+        var disliked = (this.props.editing || this.props.rating === "DISLIKED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="DISLIKED" iconName="fas fa-thumbs-down"></ClickableIcon> : null;
+        var mixed = (this.props.editing || this.props.rating === "MIXED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="MIXED" iconName="fas fa-circle"></ClickableIcon> : null;
+        var liked = (this.props.editing || this.props.rating === "LIKED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="LIKED" iconName="fas fa-thumbs-up"></ClickableIcon> : null;
+        var loved = (this.props.editing || this.props.rating === "LOVED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="LOVED" iconName="fas fa-heart"></ClickableIcon> : null;
+        return <div className="rating">
+            {unrated}
+            {disliked}
+            {mixed}
+            {liked}
+            {loved}
+        </div>;
     }
 }
 
 class ClickableIcon extends React.Component {
     handleClick = () => {
-        if(this.props.editable)
+        if(this.props.editing)
         {
             this.props.clickHandler(this.props.value);
         }
     }
 
     render() {
-        var classNames = "clickableicon fas " + this.props.iconName + " " + this.props.value.toLowerCase();
-        if(this.props.editable)
-        {
-            classNames += " editable"
-        }
-        if(this.props.selection == this.props.value)
-        {
-            classNames += " selected"
-        }
-        return <i className={classNames} onClick={this.handleClick}></i>
+        var classNames = "icon clickableicon " + noU(this.props.iconName) + " " + this.props.value.toLowerCase() + (this.props.editing ? " editing" : "");
+        return <i className={classNames} onClick={this.handleClick}></i>;
     }
 }
 
