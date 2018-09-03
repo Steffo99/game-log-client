@@ -1,7 +1,7 @@
 var token = localStorage.getItem("token");
 var user_id = localStorage.getItem("user_id");
 var username = localStorage.getItem("username");
-var host = "https://game-log.steffo.eu";
+var host = "http://127.0.0.1:5000";
 
 function noU(variable)
 {
@@ -348,7 +348,12 @@ class GamesList extends React.Component {
         if(this.state.progress == "loading")
         {
             games = <div className="gameslist loading">
-                <i className="fas fa-spinner fa-pulse"></i> Loading games...
+                <div className="game null">
+                    <div className="rating">
+                        <i className="fas fa-spinner fa-pulse"></i>
+                    </div>
+                     Loading games...
+                </div>
             </div>
         }
         else if(this.state.progress == "error")
@@ -365,7 +370,7 @@ class GamesList extends React.Component {
         }
         return <div className="gameslist done">
             {games}
-            <OneUseButton id="addsteamgamesbutton" className="game null" text="Add games from Steam" handleClick={this.onAddSteamGamesClick} progress={this.state.steamLoginProgress} icon="fab fa-steam rating"></OneUseButton>
+            <OneUseButton id="addsteamgamesbutton" className="game null" text="Sync games from Steam" handleClick={this.onAddSteamGamesClick} progress={this.state.steamLoginProgress} icon="fab fa-steam rating"></OneUseButton>
         </div>;
     }
 }
@@ -454,32 +459,30 @@ class GameCopy extends React.Component {
 
 class ProgressWidget extends React.Component {
     render() {
-        var not_started = (this.props.editing) ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="NOT_STARTED" iconName="fas fa-eraser"></ClickableIcon> : null;
-        var unfinished = (this.props.editing || this.props.progress === "UNFINISHED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="UNFINISHED" iconName="fas fa-play"></ClickableIcon> : null;
-        var beaten = (this.props.editing || this.props.progress === "BEATEN") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="BEATEN" iconName="fas fa-check-circle"></ClickableIcon> : null;
-        var completed = (this.props.editing || this.props.progress === "COMPLETED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="COMPLETED" iconName="fas fa-trophy"></ClickableIcon> : null;
-        var mastered = (this.props.editing || this.props.progress === "MASTERED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="MASTERED" iconName="fas fa-gem"></ClickableIcon> : null;
-        var no_progress = (this.props.editing || this.props.progress === "NO_PROGRESS") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="NO_PROGRESS" iconName="fas fa-ban"></ClickableIcon> : null;
+        var not_started = (this.props.editing || this.props.progress === "NOT_STARTED") ? <ClickableIcon title="Not started yet" editing={this.props.editing} currentValue={this.props.progress} clickHandler={this.props.clickHandler} value="NOT_STARTED" iconName="fas fa-stop-circle"></ClickableIcon> : null;
+        var unfinished = (this.props.editing || this.props.progress === "UNFINISHED") ? <ClickableIcon title="Unfinished" editing={this.props.editing} currentValue={this.props.progress} clickHandler={this.props.clickHandler} value="UNFINISHED" iconName="fas fa-play-circle"></ClickableIcon> : null;
+        var beaten = (this.props.editing || this.props.progress === "BEATEN") ? <ClickableIcon title="Beaten (finished main story)" editing={this.props.editing} currentValue={this.props.progress} clickHandler={this.props.clickHandler} value="BEATEN" iconName="fas fa-check-circle"></ClickableIcon> : null;
+        var completed = (this.props.editing || this.props.progress === "COMPLETED") ? <ClickableIcon title="Completed (100%)" editing={this.props.editing} currentValue={this.props.progress} clickHandler={this.props.clickHandler} value="COMPLETED" iconName="fas fa-trophy"></ClickableIcon> : null;
+        var mastered = (this.props.editing || this.props.progress === "MASTERED") ? <ClickableIcon title="Mastered (200% / speedrun / etc)" editing={this.props.editing} currentValue={this.props.progress} clickHandler={this.props.clickHandler} value="MASTERED" iconName="fas fa-gem"></ClickableIcon> : null;
+        var no_progress = (this.props.editing || this.props.progress === "NO_PROGRESS") ? <ClickableIcon title="No progress (game doesn't have an ending)" editing={this.props.editing} currentValue={this.props.progress} clickHandler={this.props.clickHandler} value="NO_PROGRESS" iconName="fas fa-circle"></ClickableIcon> : null;
         return <div className="progress">
+            {no_progress}
             {not_started}
             {unfinished}
             {beaten}
             {completed}
             {mastered}
-            {no_progress}
         </div>
     }
 }
 
 class RatingWidget extends React.Component {
     render() {
-        var unrated = (this.props.editing) ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="UNRATED" iconName="fas fa-eraser"></ClickableIcon> : null;
-        var disliked = (this.props.editing || this.props.rating === "DISLIKED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="DISLIKED" iconName="fas fa-thumbs-down"></ClickableIcon> : null;
-        var mixed = (this.props.editing || this.props.rating === "MIXED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="MIXED" iconName="fas fa-circle"></ClickableIcon> : null;
-        var liked = (this.props.editing || this.props.rating === "LIKED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="LIKED" iconName="fas fa-thumbs-up"></ClickableIcon> : null;
-        var loved = (this.props.editing || this.props.rating === "LOVED") ? <ClickableIcon editing={this.props.editing} clickHandler={this.props.clickHandler} value="LOVED" iconName="fas fa-heart"></ClickableIcon> : null;
+        var disliked = (this.props.editing || this.props.rating === "DISLIKED") ? <ClickableIcon title="Disliked" currentValue={this.props.rating} editing={this.props.editing} clickHandler={this.props.clickHandler} value="DISLIKED" iconName="fas fa-thumbs-down"></ClickableIcon> : null;
+        var mixed = (this.props.editing || this.props.rating === "MIXED") ? <ClickableIcon title="Mixed" currentValue={this.props.rating} editing={this.props.editing} clickHandler={this.props.clickHandler} value="MIXED" iconName="fas fa-circle"></ClickableIcon> : null;
+        var liked = (this.props.editing || this.props.rating === "LIKED") ? <ClickableIcon title="Liked" currentValue={this.props.rating} editing={this.props.editing} clickHandler={this.props.clickHandler} value="LIKED" iconName="fas fa-thumbs-up"></ClickableIcon> : null;
+        var loved = (this.props.editing || this.props.rating === "LOVED") ? <ClickableIcon title="Loved" currentValue={this.props.rating} editing={this.props.editing} clickHandler={this.props.clickHandler} value="LOVED" iconName="fas fa-heart"></ClickableIcon> : null;
         return <div className="rating">
-            {unrated}
             {disliked}
             {mixed}
             {liked}
@@ -492,13 +495,20 @@ class ClickableIcon extends React.Component {
     handleClick = () => {
         if(this.props.editing)
         {
-            this.props.clickHandler(this.props.value);
+            if(this.props.value === this.props.currentValue)
+            {
+                this.props.clickHandler(null)
+            }
+            else
+            {
+                this.props.clickHandler(this.props.value);
+            }
         }
     }
 
     render() {
-        var classNames = "icon clickableicon " + noU(this.props.iconName) + " " + this.props.value.toLowerCase() + (this.props.editing ? " editing" : "");
-        return <i className={classNames} onClick={this.handleClick}></i>;
+        var classNames = "icon clickableicon " + noU(this.props.iconName) + " " + this.props.value.toLowerCase() + (this.props.editing ? " editing" : "") + (this.props.currentValue == this.props.value ? " selected" : "");
+        return <i title={noU(this.props.title)} className={classNames} onClick={this.handleClick}></i>;
     }
 }
 

@@ -5,7 +5,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     background-color: @background-color;
     color: @main-color;
-    box-sizing: border-box;
+    box-sizing: border-box !important;
 }
 
 label.formelement {
@@ -55,7 +55,6 @@ label.formelement {
     width: 100%;
     padding: 4px;
     cursor: pointer;
-    box-sizing: border-box;
 
     &[disabled=""] {
         cursor: not-allowed;
@@ -132,6 +131,22 @@ i.far, i.fas, i.fab {
     
     .progress {
         margin-left: auto;
+
+        .selected:not(.editing)
+        {
+            &.completed {
+                color: gold;
+                text-shadow: 0 0 3px black;
+            }
+    
+            &.mastered {
+                color: cyan;
+                animation-name: diamond;
+                animation-duration: 2s;
+                animation-direction: alternate;
+                animation-iteration-count: infinite;
+            }
+        }
     }
 
     .platform {
@@ -152,13 +167,13 @@ i.far, i.fas, i.fab {
 
         i.editing {
             //Hovered or selected
-            &:hover, &.selected:not(.not_started):not(.unrated) {
+            &:hover, &.selected {
                 color: rgba(0, 0, 0, 0.5);
                 cursor: pointer;
             }
 
             &:active {
-                color: rgba(0, 0, 0, 1);
+                color: rgba(0, 0, 0, 1) !important;
             }
         }
     }
@@ -248,6 +263,17 @@ i.far, i.fas, i.fab {
         font-weight: normal;
         font-size: medium;
         vertical-align: middle;
+        background-color: @main-color;
+        color: black;
+        border-radius: 2px;
+        
+        &:hover {
+            background-color: white;
+        }
+
+        &:active {
+            background-color: grey;
+        }
     }
 
     #addsteamgamesbutton {
@@ -264,3 +290,12 @@ i.far, i.fas, i.fab {
     } 
 }
 
+@keyframes diamond {
+    from {
+        text-shadow: 0 0 2px rgb(0, 148, 148), 0 0 5px rgb(0, 148, 148);
+    }
+
+    to {
+        text-shadow: 0 0 5px cyan, 0 0 5px cyan;
+    }
+}
