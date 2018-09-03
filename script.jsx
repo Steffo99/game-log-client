@@ -1,7 +1,7 @@
 var token = localStorage.getItem("token");
 var user_id = localStorage.getItem("user_id");
 var username = localStorage.getItem("username");
-var host = "http://127.0.0.1:5000";
+var host = "http://game-log.steffo.eu";
 
 function noU(variable)
 {
@@ -352,14 +352,19 @@ class GamesList extends React.Component {
                     <div className="rating">
                         <i className="fas fa-spinner fa-pulse"></i>
                     </div>
-                     Loading games...
+                    Loading games...
                 </div>
             </div>
         }
         else if(this.state.progress == "error")
         {
             games = <div className="gameslist error">
-                <i className="fas fa-exclamation-circle"></i> An error occoured while loading games.
+                <div className="game null">
+                    <div className="rating">
+                        <i className="fas fa-exclamation-circle"></i>
+                    </div>
+                    An error occoured while loading games.
+                </div>
             </div>
         }
         else if(this.state.progress == "done")
