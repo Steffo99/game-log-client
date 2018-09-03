@@ -1,7 +1,7 @@
 var token = localStorage.getItem("token");
 var user_id = localStorage.getItem("user_id");
 var username = localStorage.getItem("username");
-var host = "http://game-log.steffo.eu";
+var host = "https://game-log.steffo.eu";
 
 function noU(variable)
 {
