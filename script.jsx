@@ -11,7 +11,7 @@ function noU(variable)
 class FormElement extends React.Component {
     render() {
         var type;
-        var status = "formelement";
+        var classNames = noU(this.props.className) + " formelement";
         if(this.props.type !== undefined)
         {
             type = this.props.type;
@@ -22,9 +22,9 @@ class FormElement extends React.Component {
         }
         if(this.props.error !== undefined)
         {
-            status += " error";
+            classNames += " error";
         }
-        return <label className={status} title={this.props.error}><span>{this.props.name}</span> <input onInput={this.handleInput} type={type} name={this.props.name} /></label>
+        return <label className={classNames} title={this.props.error}><span>{this.props.name}</span> <input onInput={this.handleInput} type={type}></input></label>
     }
 
     handleInput = (event) => {
@@ -83,8 +83,8 @@ class LoginForm extends React.Component {
         }
         return <div className="form login">
             <h1>Login</h1>
-            <FormElement handleInput={this.onUserInput} name="username"></FormElement>
-            <FormElement handleInput={this.onPasswordInput} name="password" type="password"></FormElement>
+            <FormElement handleInput={this.onUserInput} name="Username"></FormElement>
+            <FormElement handleInput={this.onPasswordInput} name="Password" type="password"></FormElement>
             <OneUseButton id="loginbutton" handleClick={this.onLoginClick} progress={progress} text="Login"></OneUseButton>
         </div>;
     }
@@ -168,9 +168,9 @@ class RegisterForm extends React.Component {
         }
         return <div className="form register">
             <h1>Register</h1>
-            <FormElement handleInput={this.onUserInput} name="username"></FormElement>
-            <FormElement handleInput={this.onPasswordInput} name="password" type="password"></FormElement>
-            <FormElement handleInput={this.onConfirmPasswordInput} name="confirm-password" type="password"></FormElement>
+            <FormElement handleInput={this.onUserInput} name="Username"></FormElement>
+            <FormElement handleInput={this.onPasswordInput} name="Password" type="password"></FormElement>
+            <FormElement handleInput={this.onConfirmPasswordInput} name="Confirm password" type="password"></FormElement>
             <OneUseButton id="registerbutton" handleClick={this.onRegisterClick} progress={progress} text="Register"></OneUseButton>
         </div>
     }
@@ -264,7 +264,12 @@ class RegisterForm extends React.Component {
 class MainSite extends React.Component {
     render()
     {
-        return <Profile userId={user_id} username={username}></Profile>
+        return <div>
+            <SearchWidget></SearchWidget>
+            <div id="profilecontainer">
+                <Profile userId={user_id} username={username}></Profile>
+            </div>
+        </div>
     }
 }
 
@@ -514,6 +519,65 @@ class ClickableIcon extends React.Component {
     render() {
         var classNames = "icon clickableicon " + noU(this.props.iconName) + " " + this.props.value.toLowerCase() + (this.props.editing ? " editing" : "") + (this.props.currentValue == this.props.value ? " selected" : "");
         return <i title={noU(this.props.title)} className={classNames} onClick={this.handleClick}></i>;
+    }
+}
+
+class SearchWidget extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            search: "",
+            progress: "disabled"
+        }
+    }
+
+    render() {
+        return <div className="searchwidget">
+            <input type="text" onInput={this.searchInput} onKeyPress={this.keyPressInput}></input>
+            <OneUseButton handleClick={this.searchClick} icon="fas fa-search"></OneUseButton>
+        </div>
+    }
+
+    searchInput = (event) => {
+        this.setState({
+            search: event.target.value,
+            progress: (event.target.value !== "") ? "not-clicked" : "disabled"
+        });
+    }
+
+    keyPressInput = (event) => {
+        if(event.key == "Enter" && this.state.progress === "not-clicked")
+        {
+            this.searchClick(event);
+        }
+    }
+
+    searchClick = (event) => {
+        fetch(host + "/api/v1/user/search?username=" + this.state.search, {
+            "method": "GET"
+        })
+        .then(res => res.json())
+        .then((result) => {
+            if(result.result == "error")
+            {
+                this.setState({
+                    progress: "error"
+                });
+                return;
+            }
+            else if(result.result == "success")
+            {
+                ReactDOM.render(
+                    <Profile userId={result.user.id} username={result.user.username}></Profile>,
+                    document.getElementById('profilecontainer')
+                );
+            }
+        },
+        (error) => {
+            this.setState({
+                progress: "error"
+            });
+        })
     }
 }
 
