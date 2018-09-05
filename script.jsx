@@ -420,7 +420,7 @@ class GamesList extends React.Component {
                 return <GameCopy gameCopy={gamecopy} editing={this.props.editing} key={gamecopy.id}></GameCopy>
             });
         }
-        var syncSteamGames = (editable) ? <OneUseButton id="addsteamgamesbutton" className="game null" text="Sync games from Steam" handleClick={this.onAddSteamGamesClick} progress={this.state.steamLoginProgress} icon="fab fa-steam rating"></OneUseButton> : null;
+        var syncSteamGames = (this.props.editable) ? <OneUseButton id="addsteamgamesbutton" className="game null" text="Sync games from Steam" handleClick={this.onAddSteamGamesClick} progress={this.state.steamLoginProgress} icon="fab fa-steam rating"></OneUseButton> : null;
         return <div className="gameslist done">
             {games}
             {syncSteamGames}
