@@ -329,7 +329,7 @@ class Profile extends React.Component {
         var editButton = editable ? editButton = <ToggleButton id="editbutton" handleClick={this.toggleEditable} buttonState={this.state.editing} text="Edit"></ToggleButton> : null;
         return <div id="profile">
             <h2>{this.props.username}'s profile {editButton}</h2>
-            <GamesList editing={this.state.editing} userId={this.props.userId}></GamesList>
+            <GamesList editing={this.state.editing} editable={editable} userId={this.props.userId}></GamesList>
         </div>;
     }
 
@@ -420,9 +420,10 @@ class GamesList extends React.Component {
                 return <GameCopy gameCopy={gamecopy} editing={this.props.editing} key={gamecopy.id}></GameCopy>
             });
         }
+        var syncSteamGames = (editable) ? <OneUseButton id="addsteamgamesbutton" className="game null" text="Sync games from Steam" handleClick={this.onAddSteamGamesClick} progress={this.state.steamLoginProgress} icon="fab fa-steam rating"></OneUseButton> : null;
         return <div className="gameslist done">
             {games}
-            <OneUseButton id="addsteamgamesbutton" className="game null" text="Sync games from Steam" handleClick={this.onAddSteamGamesClick} progress={this.state.steamLoginProgress} icon="fab fa-steam rating"></OneUseButton>
+            {syncSteamGames}
         </div>;
     }
 }
