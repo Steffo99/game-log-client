@@ -261,6 +261,15 @@ class RegisterForm extends React.Component {
     }
 }
 
+class Navbar extends React.Component {
+    render() {
+        return <div className="navbar">
+            <b>game-log-client</b>
+            <SearchWidget handleSearch={this.props.handleSearch}></SearchWidget>
+        </div>
+    }
+}
+
 class MainSite extends React.Component {
     constructor(props) {
         super(props);
@@ -276,7 +285,7 @@ class MainSite extends React.Component {
     render()
     {
         return <div>
-            <SearchWidget handleSearch={this.searchClick}></SearchWidget>
+            <Navbar handleSearch={this.searchClick}></Navbar>
             <div id="profilecontainer">
                 <Profile key={this.state.data.user_id} userId={this.state.data.user_id} username={this.state.data.username}></Profile>
             </div>
@@ -577,7 +586,7 @@ class SearchWidget extends React.Component {
     render() {
         return <div className="searchwidget">
             <input type="text" onInput={this.searchInput} onKeyPress={this.keyPressInput}></input>
-            <OneUseButton id="searchbutton" handleClick={this.props.handleSearch} progress={this.state.progress} icon="fas fa-search"></OneUseButton>
+            <OneUseButton className="searchbutton" handleClick={this.props.handleSearch} progress={this.state.progress} icon="fas fa-arrow-alt-circle-right"></OneUseButton>
         </div>
     }
 

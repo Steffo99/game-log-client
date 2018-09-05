@@ -290,8 +290,24 @@ i.far, i.fas, i.fab {
     } 
 }
 
-#searchbutton {
-    display: inline;
+.navbar {
+    display: flex;
+
+    .searchwidget {
+        margin-left: auto;
+
+        input {
+            border: none;
+            padding: 2px;
+            border-radius: 2px;
+            background-color: rgba(red(@main-color), green(@main-color), blue(@main-color), 0.2);
+            color: @main-color;
+        }
+
+        .searchbutton {
+            display: inline;
+        }
+    }
 }
 
 @keyframes diamond {
