@@ -262,14 +262,56 @@ class RegisterForm extends React.Component {
 }
 
 class MainSite extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            mode: "profile",
+            data: {
+                user_id: user_id,
+                username: username
+            }
+        }
+    }
+
     render()
     {
         return <div>
-            <SearchWidget></SearchWidget>
+            <SearchWidget handleSearch={this.searchClick}></SearchWidget>
             <div id="profilecontainer">
-                <Profile userId={user_id} username={username}></Profile>
+                <Profile key={this.state.data.user_id} userId={this.state.data.user_id} username={this.state.data.username}></Profile>
             </div>
         </div>
+    }
+
+    searchClick = (input) => {
+        fetch(host + "/api/v1/user/search?username=" + input, {
+            "method": "GET"
+        })
+        .then(res => res.json())
+        .then((result) => {
+            if(result.result == "error")
+            {
+                this.setState({
+                    progress: "error"
+                });
+                return;
+            }
+            else if(result.result == "success")
+            {
+                this.setState({
+                    mode: "profile",
+                    data: {
+                        user_id: result.user.id,
+                        username: result.user.username
+                    }
+                });
+            }
+        },
+        (error) => {
+            this.setState({
+                progress: "error"
+            });
+        })
     }
 }
 
@@ -534,50 +576,36 @@ class SearchWidget extends React.Component {
     render() {
         return <div className="searchwidget">
             <input type="text" onInput={this.searchInput} onKeyPress={this.keyPressInput}></input>
-            <OneUseButton handleClick={this.searchClick} icon="fas fa-search"></OneUseButton>
+            <OneUseButton id="searchbutton" handleClick={this.props.handleSearch} progress={this.state.progress} icon="fas fa-search"></OneUseButton>
         </div>
     }
 
     searchInput = (event) => {
         this.setState({
             search: event.target.value,
-            progress: (event.target.value !== "") ? "not-clicked" : "disabled"
         });
+        if(event.target.value !== "")
+        {
+            this.setState({
+                progress: "not-clicked"
+            })
+        }
+        else {
+            this.setState({
+                progress: "disabled"
+            })
+        }
     }
 
     keyPressInput = (event) => {
         if(event.key == "Enter" && this.state.progress === "not-clicked")
         {
-            this.searchClick(event);
+            this.props.handleSearch(this.state.search);
         }
     }
 
-    searchClick = (event) => {
-        fetch(host + "/api/v1/user/search?username=" + this.state.search, {
-            "method": "GET"
-        })
-        .then(res => res.json())
-        .then((result) => {
-            if(result.result == "error")
-            {
-                this.setState({
-                    progress: "error"
-                });
-                return;
-            }
-            else if(result.result == "success")
-            {
-                ReactDOM.render(
-                    <Profile userId={result.user.id} username={result.user.username}></Profile>,
-                    document.getElementById('profilecontainer')
-                );
-            }
-        },
-        (error) => {
-            this.setState({
-                progress: "error"
-            });
-        })
+    buttonClick = (event) => {
+        this.props.handleSearch(this.state.search);
     }
 }
 
