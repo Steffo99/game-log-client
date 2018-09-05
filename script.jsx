@@ -325,7 +325,7 @@ class Profile extends React.Component {
 
     render()
     {
-        var editable = (this.props.userId === user_id)
+        var editable = (this.props.userId == user_id)
         var editButton = editable ? editButton = <ToggleButton id="editbutton" handleClick={this.toggleEditable} buttonState={this.state.editing} text="Edit"></ToggleButton> : null;
         return <div id="profile">
             <h2>{this.props.username}'s profile {editButton}</h2>
